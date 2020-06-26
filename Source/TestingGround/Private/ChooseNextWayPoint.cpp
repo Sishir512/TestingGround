@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PatrollingGuards.h"
+
+#include "PatrolRoute.h"
 #include "AIController.h"
 #include "ChooseNextWayPoint.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
@@ -10,9 +11,14 @@ EBTNodeResult::Type UChooseNextWayPoint::ExecuteTask(UBehaviorTreeComponent& Own
 	
 	auto AIController = OwnerComp.GetAIOwner();
 	auto ControlledPawn = AIController->GetPawn();
-	auto PatrollingGuard = Cast<APatrollingGuards>(ControlledPawn);
-	auto PatrolPoints = PatrollingGuard->PatrolPointsCPP;
-	if (!ensure(PatrolPoints)) { return; }
+	
+	auto PatrolRoute = ControlledPawn->FindComponentByClass<UPatrolRoute>();
+	if (!ensure(PatrolRoute)) { return EBTNodeResult::Failed; }
+	auto PatrolPoints = PatrolRoute->GetPatrolPoints();
+	if (PatrolPoints.Num() == 0) {
+		UE_LOG(LogTemp, Error, TEXT("No patrol points found"));
+		return EBTNodeResult::Failed;
+	}
 
 	auto BlackboardComp = OwnerComp.GetBlackboardComponent();
 	auto Index = BlackboardComp->GetValueAsInt(IndexKey.SelectedKeyName);
