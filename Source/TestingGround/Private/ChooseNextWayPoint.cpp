@@ -2,8 +2,14 @@
 
 
 #include "ChooseNextWayPoint.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 EBTNodeResult::Type UChooseNextWayPoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) {
-	UE_LOG(LogTemp, Warning, TEXT("Donkey ChooseNextWayPoint running"));
+	
+	auto BlackboardComp = OwnerComp.GetBlackboardComponent();
+	auto Index = BlackboardComp->GetValueAsInt(IndexKey.SelectedKeyName);
+	UE_LOG(LogTemp, Warning, TEXT("Index : %d") , Index);
+
 	return EBTNodeResult::Succeeded;
 }
