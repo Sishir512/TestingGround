@@ -81,14 +81,7 @@ void AFirstPersonCharacter::BeginPlay()
 
 	//Attach gun mesh component to Skeleton, doing it here because the skeleton is not yet created in the constructor
 	//FP_Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-	if (!GunBlueprint) {
-		UE_LOG(LogTemp, Error, TEXT("No gun blueprint was initialised ."));
-		return;
-	}
-	Gun = GetWorld()->SpawnActorDeferred<AGun>(GunBlueprint, GetActorTransform());
-	if (!Gun) return;
-	Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-	UGameplayStatics::FinishSpawningActor(Gun, GetActorTransform());
+	
 
 	// Show or hide the two versions of the gun based on whether or not we're using motion controllers.
 	if (bUsingMotionControllers)
@@ -101,22 +94,36 @@ void AFirstPersonCharacter::BeginPlay()
 		VR_Gun->SetHiddenInGame(true, true);
 		Mesh1P->SetHiddenInGame(false, true);
 	}
+	Gun->AnimInstance = Mesh1P->GetAnimInstance();
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Input
+
+void AFirstPersonCharacter::AttachGun() {
+	if (!GunBlueprint) {
+		UE_LOG(LogTemp, Error, TEXT("No gun blueprint was initialised ."));
+		return;
+	}
+	Gun = GetWorld()->SpawnActorDeferred<AGun>(GunBlueprint, GetActorTransform());
+	if (!Gun) return;
+	Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+	UGameplayStatics::FinishSpawningActor(Gun, GetActorTransform());
+}
 
 void AFirstPersonCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// set up gameplay key bindings
 	check(PlayerInputComponent);
 
+	if (!Gun) AttachGun();
+
 	// Bind jump events
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 	// Bind fire event
-	//PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AFirstPersonCharacter::OnFire);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, Gun, &AGun::OnFire);
 
 	// Enable touchscreen input
 	EnableTouchscreenMovement(PlayerInputComponent);

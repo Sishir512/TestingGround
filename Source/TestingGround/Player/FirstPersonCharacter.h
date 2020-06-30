@@ -71,6 +71,7 @@ public:
 private:
 
 	class AGun* Gun;
+	void AttachGun();
 protected:
 	
 	/** Fires a projectile. */
