@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Gun.generated.h"
 
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class TESTINGGROUND_API AGun : public AActor
 {
 	GENERATED_BODY()
@@ -19,7 +19,7 @@ public:
 	class USkeletalMeshComponent* FP_Gun;
 
 	/** Location on gun mesh where projectiles should spawn. */
-	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
+	UPROPERTY(BlueprintReadWrite, Category = Mesh)
 	class USceneComponent* FP_MuzzleLocation;
 
 	/** Projectile class to spawn */
