@@ -13,6 +13,9 @@ class ATestingGroundGameMode : public AGameModeBase
 
 public:
 	ATestingGroundGameMode();
+
+	
+
 };
 
 

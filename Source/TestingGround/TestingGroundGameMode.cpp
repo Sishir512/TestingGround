@@ -15,3 +15,5 @@ ATestingGroundGameMode::ATestingGroundGameMode()
 	// use our custom HUD class
 	HUDClass = ATestingGroundHUD::StaticClass();
 }
+
+
